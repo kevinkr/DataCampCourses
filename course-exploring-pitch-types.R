@@ -453,3 +453,63 @@ grid(lty = "solid", col = "black")
 
 
 
+# Create greinke_table
+greinke_table <- table(greinke_sub$zone)
+
+# Create zone_prop
+zone_prop <- round(prop.table(greinke_table),3)
+
+# Plot strike zone grid, don't change this
+plot_grid()
+
+# Add text from zone_prop[1]
+text( -1.5, 4.5, zone_prop[1], cex = 1.5)
+
+# For loops and plotting locational grid proportions
+
+# In this exercise, you will use a for loop to plot the proportions for each zone in 
+# the grid. This prevents you from having to individually plot the text() for each zone
+# onto the grid with its own line of code.
+# 
+# Note that in the data, each zone is associated with a given zone_px and zone_pz 
+# coordinate for plotting the text. Additionally, each zone proportion in the zone_prop 
+# table is associated with a given zone number. Now, it's up to you to create a for 
+# loop that plots text from zone_prop onto the grid for all zones (1 through 20).
+
+# Plot grid, don't change this
+plot_grid()
+
+# Plot text using for loop
+for(i in 1:20) {
+  text(mean(greinke_sub$zone_px[greinke_sub$zone == i]),
+       mean(greinke_sub$zone_pz[greinke_sub$zone == i]),
+       zone_prop[i], cex = 1.5)
+}
+
+# Create zone_prop_july
+zone_prop_july <- round(
+  table(greinke_sub$zone[greinke_sub$july == "july"]) /
+    nrow(subset(greinke_sub, july == "july")), 3)
+
+# Create zone_prop_other
+zone_prop_other <- round(
+  table(greinke_sub$zone[greinke_sub$july == "other"]) /
+    nrow(subset(greinke_sub, july == "other")), 3)
+
+# Print zone_prop_july
+zone_prop_july
+
+# Print zone_prop_other
+zone_prop_other
+
+# Fix zone_prop_july vector, don't change this
+zone_prop_july2 <- c(zone_prop_july[1:3], 0.00, zone_prop_july[4:19])
+names(zone_prop_july2) <- c(1:20)
+
+# Create zone_prop_diff
+zone_prop_diff <- zone_prop_july2 - zone_prop_other
+
+# Print zone_prop_diff
+zone_prop_diff
+
+
