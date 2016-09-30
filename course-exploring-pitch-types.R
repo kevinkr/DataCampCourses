@@ -239,3 +239,217 @@ greinke$bs_count <- paste(greinke$balls, greinke$strikes, sep = "-")
 # Print the first 6 rows of greinke
 head(greinke)
 
+# Now that you've created the bs_count variable, it's time to put it to use. In this exercise, 
+# you'll identify the percentage change in the rate at which Greinke put himself in each of the 
+# ball-strike counts. Let's get more practice making a proportions table.
+
+# Create bs_count_tab
+bs_count_tab <- table(greinke$bs_count, greinke$july)
+
+# Create bs_month
+bs_month <- round(prop.table(bs_count_tab, margin = 2), 3)
+
+# Print bs_month
+bs_month
+
+# As you did with pitch type changes, here you'll create a bar plot to visualize how common 
+# each ball-strike count was in July vs. other months. Let's get started.
+
+# As you did with pitch type changes, here you'll create a bar plot to visualize how common 
+# each ball-strike count was in July vs. other months. Let's get started.
+
+# Create diff_bs
+diff_bs <- round((bs_month[,1] - bs_month[,2])/bs_month[,2], 3)
+
+# Print diff_bs
+diff_bs
+
+# Create a bar plot of the changes
+barplot(diff_bs, main = "Ball-Strike Count Rate in July vs. Other Months", 
+        ylab = "Percentage Change in July", ylim = c(-0.15, 0.15), las = 2)
+
+
+# Interestingly, Greinke was in more hitter friendly counts in July than the other months in which 
+# he pitched. That's a somewhat unexpected result.
+# 
+# It could be that he was more willing to use off-speed pitches earlier in the count, and if 
+# those are thrown for strikes less often, then this might be driving this result. You will look at these outcomes a bit more in the last chapter of this course.
+# 
+# For this exercise, you will take a look to see if Greinke used certain pitches more or less 
+# often in specific counts overall. In particular, you'll tabulate the proportion of times he throws 
+# each pitch for each count
+
+# Create type_bs as a table() comparing the pitch_type with bs_count. Put the pitch_type values as 
+# the rows in the table.
+
+# Create type_bs as a table() comparing the pitch_type with bs_count. Put the pitch_type values 
+# as the rows in the table.
+
+# Create type_bs
+type_bs <- table(greinke$pitch_type, greinke$bs_count)
+
+# Print type_bs
+type_bs
+
+# Create type_bs_prop
+type_bs_prop <- round(prop.table(type_bs, margin = 2), 3)
+
+# Print type_bs_prop
+type_bs_prop
+
+
+# There is often talk about pitchers having more trouble late in games. There are a number of reasons 
+# for this. They could be getting tired and losing velocity, or batters may have already seen pitches 
+# they throw. Given this, we'll try to see if Greinke resorts more to his off-speed pitches later in games.
+# 
+# First, you will create a variable indicating that a pitch was thrown late in a game, defined as any 
+# pitch past the 5th inning. Then, you can make a table of pitch selection for late-game pitches.
+
+# Create a new variable called late_in_game inside the greinke dataset and set it equal to 1 if 
+# greinke$inning > 5 and to 0 otherwise.
+# Create the late_in_game column
+
+# Create greinke_table
+greinke_table <- table(greinke_sub$zone)
+
+# Create zone_prop
+zone_prop <- round(prop.table(greinke_table), 3)
+
+# Plot strike zone grid, don't change this
+plot_grid()
+
+# Add text from zone_prop[1]
+text(-1.5, 4.5, zone_prop[1], cex = 1.5)
+
+
+greinke$late_in_game <- ifelse(greinke$inning > 5, 1, 0)
+
+# Convert late_in_game
+greinke$late_in_game <- as.factor(greinke$late_in_game)
+
+# Create type_late
+type_late <- table(greinke$pitch_type, greinke$late_in_game)
+
+# Create type_late_prop
+type_late_prop <- round(prop.table(type_late, margin = 2), 3)
+
+# Print type_late_prop
+type_late_prop
+
+
+# This exercise will make use of a grouped barplot, so that you can assess whether there are 
+# changes in pitch selection for specific pitches early vs. late in the game.
+# 
+# You will again use the barplot() function, which also allows for creation of grouped barplots, 
+# paired with the transpose function, t(), and the parameter beside = TRUE.
+
+# Transpose the type_late table from the last exercise using the t() function. Store the result as t_type_late.
+
+# Create t_type_late
+t_type_late <- t(type_late)
+
+# Print dimensions of t_type_late
+dim(t_type_late)
+
+# Print dimensions of type_late
+dim(type_late)
+
+# Change row names
+rownames(t_type_late) <- c("Early", "Late")
+
+# Make barplot using t_type_late
+barplot(t_type_late, beside = TRUE, col = c("red", "blue"), 
+        main = "Early vs. Late In Game Pitch Selection", 
+        ylab = "Pitch Selection Proportion", 
+        legend = rownames(t_type_late))
+
+
+
+#####
+# Pitch location and Greinke's July
+#####
+# In this exercise, you will start to use the horizontal and vertical location variables: 
+#   px and pz, respectively. You'll begin by calculating the average pitch height pz for 
+# Greinke in July relative to other months using the code provided. Note that it's multiplied 
+# by 12 so that your answer is in inches, while the variable is recorded in feet.
+# 
+# In the second part of the exercise, you'll find the average horizontal location to 
+# left-handed batters (LHB) and right-handed batters (RHB), respectively. Remember that a 
+# positive px value is outside against righties and inside against lefties. Do this by subsetting 
+# the data into RHB and LHB subsets, then using tapply() as you have in previous exercises.
+
+# Calculate average pitch height in inches in July vs. other months
+tapply(greinke$pz, greinke$july, mean) * 12
+
+# Create greinke_lhb
+greinke_lhb <- subset(greinke, batter_stand == "L")
+
+# Create greinke_rhb
+greinke_rhb <- subset(greinke, batter_stand == "R")
+
+# Compute average px location for LHB
+tapply(greinke_lhb$px, greinke_lhb$july, mean) * 12
+
+# Compute average px location for RHB
+tapply(greinke_rhb$px, greinke_rhb$july, mean) * 12
+
+
+# As you saw in the previous exercise, Greinke was pitching much closer to the center of the plate 
+# to both left- and right-handed batters in July. But it's often more helpful to visualize the pitch 
+# location, rather than guess based on averages of horizontal location numbers.
+# 
+# You should begin by looking at a single plot, color-coded by month. In the subsequent exercises, 
+# you will adjust the plots to help elucidate differences in pitch location using different plotting strategies.
+# 
+# The first line of code is completed for you, plotting Greinke's pitches to all batters, color-coded 
+# by the july variable. However, it is somewhat difficult to see due to all of the overlap. Let's try 
+# plotting the groups on side-by-side scatter plots.
+
+# Plot location of all pitches
+plot(greinke$pz ~ greinke$px,
+     col = factor(greinke$july),
+     xlim = c(-3, 3))
+
+# Formatting code, don't change this
+par(mfrow = c(1, 2))
+
+# Plot the pitch loctions for July
+plot(pz ~ px, data = greinke_july,
+     col = "red", pch = 16,
+     xlim = c(-3, 3), ylim = c(-1, 6),
+     main = "July")
+
+# Plot the pitch locations for other months
+plot(pz ~ px, data = greinke_other,
+     col = "black", pch = 16,
+     xlim = c(-3, 3), ylim = c(-1, 6),
+     main = "Other months")
+
+# Plotting each group on the different panels didn't seem to help much. One way to get around the lack of 
+# useful interpretation from a scatter plot is to bin the data. Binning data into groups and plotting it 
+# as a grid is a way of summarizing the location of pitches. While we won't cover density estimation in 
+# this course, there are direct relationships between visualizing locational density and the simple binning 
+# you will perform here.
+# 
+# You will begin by subsetting the data to exclude any pitch well outside the strike zone. You can define 
+# "well outside the strike zone" as any pitch more than 2 feet inside/outside from the center of the plate, 
+# below 0 feet (i.e. bouncing in front of the plate), or above 5 feet.
+
+# Create greinke_sub as a subset() of greinke to keep only pitches that are not well outside of the strike 
+# zone. In other words, keep pitches with px values strictly greater than -2 and strictly less than 2 and pz 
+# values strictly greater than 0 and strictly less than 5.
+
+# Create greinke_sub
+greinke_sub <- subset(greinke, px > -2 & px < 2 & pz > 0 & pz < 5)
+
+# Plot pitch location window
+plot(x = c(-2, 2), y = c(0, 5), type = "n",
+     main = "Greinke Locational Zone Proportions",
+     xlab = "Horizontal Location (ft.; Catcher's View)",
+     ylab = "Vertical Location (ft.)")
+
+# Add the grid lines
+grid(lty = "solid", col = "black")
+
+
+
